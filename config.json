@@ -1,7 +1,10 @@
 {
+    "system": {
+        "debug": false
+    },
     "database": {
         "address": "localhost",
-        "port": "27017"
+        "port": 27017
     },
     "discord": {
         "client_id": "",
