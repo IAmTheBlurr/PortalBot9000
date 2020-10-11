@@ -43,8 +43,9 @@ class CalendarTron(DiscordClient):
 
         await self.__available_commands[command](message, command_args)
 
-    async def on_ready(self):
-        print(f'We have logged in as {self.user}')
+    @staticmethod
+    async def on_ready():
+        print(f'I am CalendarTron.  I fight for the users.  Never fear, I is here.')
 
     def transform_and_roll_out(self):
         self.run(self.__config.bot_token)
