@@ -23,6 +23,13 @@ class Event(object):
         self.title = args[1]
 
     @property
+    def create_payload(self):
+        return {
+            'title': self.title,
+            'type': self.type
+        }
+
+    @property
     async def attendant_count(self):
         return
 
@@ -30,7 +37,8 @@ class Event(object):
         return
 
     async def create(self):
-        return
+        async with self.__database:
+            await self.__database.insert(self.create_payload)
 
     async def notify_attendees(self):
         return
