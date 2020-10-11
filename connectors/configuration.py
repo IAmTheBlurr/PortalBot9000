@@ -1,8 +1,9 @@
+""" ./connectors/configuration.py """
 import json
 import os
 
 
-class Configurator(object):
+class Configuration(object):
     def __init__(self, file_path: str):
         self.__file_path = file_path
         self.client_id = ''
