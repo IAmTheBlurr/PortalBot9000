@@ -2,15 +2,15 @@
 from discord import Client as DiscordClient
 from discord import Message
 
-from connectors import Configuration
+from connectors import Configuration, Database
 from entities import Event
 
 
 class CalendarTron(DiscordClient):
     def __init__(self, config: Configuration):
         super().__init__()
-        self.events = []
         self.__config = config
+        self.events = Database(self.__config, 'events')
 
     @property
     def __available_commands(self) -> dict:
@@ -20,14 +20,21 @@ class CalendarTron(DiscordClient):
         }
 
     async def __create_event(self, message: Message, *args):
-        new_event = Event(*args)
-        # await new_event.create()
-        self.events.append(new_event)
+        new_event = Event(self.__config, *args)
+        await new_event.create()
         await message.channel.send(f'Created event: {new_event.title}')
 
-    @staticmethod
-    async def __show_events(message: Message, *args):
-        await message.channel.send('Here are the events coming up for the following fortnight')
+    async def __show_events(self, message: Message, *args):
+        async with self.events:
+            events = await self.events.find({})
+            events_message = f'Here are the events coming up for the following fortnight \n\r'
+
+            for event in events:
+                events_message += f'Title: {event["title"]}\n'
+                events_message += f'Type: {event["type"]}\n'
+                events_message += f'\n'
+
+            await message.channel.send(events_message)
 
     async def on_message(self, message: Message):
         # Ignore messages which don't start with the command prefix
