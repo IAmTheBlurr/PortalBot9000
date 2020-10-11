@@ -1,8 +1,11 @@
 """ ./entities/event.py """
+from connectors import Configuration, Database
 
 
 class Event(object):
-    def __init__(self, payload=None):
+    def __init__(self, config: Configuration, payload: list = None):
+        self.__database = Database(config, 'events')
+
         self.id = ''
         self.title = ''
         self.description = ''
