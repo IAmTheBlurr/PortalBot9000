@@ -30,6 +30,7 @@ class CalendarTron(DiscordClient):
             events_message = f'Here are the events coming up for the following fortnight \n\r'
 
             for event in events:
+                events_message += f'ID: {event["id"]}\n'
                 events_message += f'Title: {event["title"]}\n'
                 events_message += f'Type: {event["type"]}\n'
                 events_message += f'\n'
