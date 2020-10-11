@@ -37,6 +37,7 @@ class Event(object):
     @property
     def create_payload(self):
         return {
+            'id': self.id,
             'title': self.title,
             'type': self.type
         }
