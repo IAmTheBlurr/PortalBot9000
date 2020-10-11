@@ -1,28 +1,29 @@
 """ ./connectors/database.py """
 from pymongo import MongoClient
+from pymongo.collection import Cursor, InsertOneResult
 
 from connectors import Configuration
-from entities import Event
 
 
 class Database(MongoClient):
-    def __init__(self, config: Configuration):
-        super().__init__(config.database_url, config.database_port)
+    def __init__(self, config: Configuration, collection: str):
+        super().__init__(config.database_url, config.database_port, connect=False)
+        self.__database = None
+        self.__desired_collection = collection
+        self.__collection = None
 
-    def __enter__(self):
-        return
+    async def __aenter__(self):
+        self.__database = self.portal_events
+        self.__collection = self.__database[self.__desired_collection]
 
-    def __exit__(self, *_):
-        return
+    async def __aexit__(self, exc_type, exc_val, exc_tb_):
+        self.close()
 
-    def connect(self):
-        return
+    async def find(self, payload: dict) -> Cursor:
+        return self.__collection.find(payload)
 
-    def disconnect(self):
-        return
+    async def find_one(self, payload: dict) -> Cursor:
+        return self.__collection.find_one(payload)
 
-    def update_event(self, event: Event):
-        return
-
-    def write_new_event(self, event: Event):
-        return
+    async def insert(self, payload: dict) -> InsertOneResult:
+        return self.__collection.insert_one(payload)
