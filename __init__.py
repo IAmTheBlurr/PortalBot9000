@@ -1,2 +1,1 @@
-from configurator import Configurator
-from connectors import Database
+""" ./__init__.py """
