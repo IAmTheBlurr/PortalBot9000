@@ -24,7 +24,7 @@ class CalendarTron(DiscordClient):
         await new_event.create()
         await message.channel.send(f'Created event: {new_event.title}')
 
-    async def __show_events(self, message: Message, *args):
+    async def __show_events(self, message: Message, _):
         async with self.events:
             events = await self.events.find({})
             events_message = f'Here are the events coming up for the following fortnight \n\r'
@@ -35,7 +35,8 @@ class CalendarTron(DiscordClient):
                 events_message += f'Type: {event["type"]}\n'
                 events_message += f'\n'
 
-            await message.channel.send(events_message)
+            await message.author.create_dm()
+            await message.author.dm_channel.send(events_message)
 
     async def on_message(self, message: Message):
         # Ignore messages which don't start with the command prefix
