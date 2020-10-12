@@ -40,8 +40,15 @@ class CalendarTron(DiscordClient):
     async def __my_events(self, message: Message, *args):
         return
 
-    async def __show_event(self, message: Message, *args):
-        return
+    async def __show_event(self, message: Message, args):
+        async with self.events:
+            event = await self.events.find_one({'id': args[0]})
+            direct_message = f'Here is the info for Event {event["id"]}\n\r'
+            direct_message += f'Title: {event["title"]}\n'
+            direct_message += f'Type: {event["type"]}\n'
+
+            await message.author.create_dm()
+            await message.author.dm_channel.send(direct_message)
 
     async def __show_events(self, message: Message, _):
         async with self.events:
