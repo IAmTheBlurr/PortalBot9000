@@ -14,15 +14,34 @@ class CalendarTron(DiscordClient):
 
     @property
     def __available_commands(self) -> dict:
+        prefix = self.__config.command_prefix
         return {
-            '!create-event': self.__create_event,
-            '!show-events': self.__show_events
+            f'{prefix}attend-event': self.__attend_event,
+            f'{prefix}cancel-event': self.__cancel_event,
+            f'{prefix}create-event': self.__create_event,
+            f'{prefix}my-events': self.__my_events,
+            f'{prefix}show-event': self.__show_event,
+            f'{prefix}show-events': self.__show_events,
+            f'{prefix}update-event': self.__update_event,
+            f'{prefix}unattend-event': self.__unattend_event,
         }
+
+    async def __attend_event(self, message: Message, *args):
+        return
 
     async def __create_event(self, message: Message, *args):
         new_event = Event(self.__config, *args)
         await new_event.create()
         await message.channel.send(f'Created event: {new_event.title}')
+
+    async def __cancel_event(self, message: Message, *args):
+        return
+
+    async def __my_events(self, message: Message, *args):
+        return
+
+    async def __show_event(self, message: Message, *args):
+        return
 
     async def __show_events(self, message: Message, _):
         async with self.events:
@@ -37,6 +56,12 @@ class CalendarTron(DiscordClient):
 
             await message.author.create_dm()
             await message.author.dm_channel.send(events_message)
+
+    async def __unattend_event(self, message: Message, *args):
+        return
+
+    async def __update_event(self, message: Message, *args):
+        return
 
     async def on_message(self, message: Message):
         # Ignore messages which don't start with the command prefix
