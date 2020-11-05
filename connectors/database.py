@@ -1,6 +1,6 @@
 """ ./connectors/database.py """
 from pymongo import MongoClient
-from pymongo.collection import Cursor, InsertOneResult
+from pymongo.collection import Cursor, DeleteResult, InsertOneResult, UpdateResult
 
 from connectors import Configuration
 
@@ -27,3 +27,9 @@ class Database(MongoClient):
 
     async def insert(self, payload: dict) -> InsertOneResult:
         return self.__collection.insert_one(payload)
+
+    async def delete(self, payload: dict) -> DeleteResult:
+        return self.__collection.delete_one(payload)
+
+    async def update(self, search_term: dict, payload: dict) -> UpdateResult:
+        return self.__collection.update_one(search_term, payload)
