@@ -30,9 +30,25 @@ class Event(object):
         numbers = ''.join([random.choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) for _ in range(3)])
         return letters + numbers
 
-    def __read_payload(self, args: list) -> None:
-        self.type = args[0]
-        self.title = args[1]
+    async def populate_from_db(self, event_id: str = ''):
+        if not event_id:
+            event_id = self.id
+
+        async with self.__database:
+            document = await self.__database.find_one({'id': event_id})
+            self.__populate_properties(dict(document))
+
+    def __populate_properties(self, data: dict):
+        self.attendees = data['attendees'] if 'attendees' in data else []
+        self.channel = data['channel'] if 'channel' in data else ''
+        self.date = data['date'] if 'date' in data else ''
+        self.description = data['description'] if 'description' in data else ''
+        self.end_time = data['end_time'] if 'end_time' in data else ''
+        self.presenter_id = data['presenter_id'] if 'presenter_id' in data else ''
+        self.start_time = data['start_time'] if 'start_time' in data else ''
+        self.time_zone = data['time_zone'] if 'time_zone' in data else ''
+        self.title = data['title'] if 'title' in data else ''
+        self.type = data['type'] if 'type' in data else ''
 
     @property
     def create_payload(self):
