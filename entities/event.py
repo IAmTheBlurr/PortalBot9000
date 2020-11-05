@@ -6,10 +6,10 @@ from connectors import Configuration, Database
 
 
 class Event(object):
-    def __init__(self, config: Configuration, payload: list = None):
-        self.__database = Database(config, 'events')
+    def __init__(self, config: Configuration, event_id: str = '', payload: dict = None, **kwargs):
+        self.__database = kwargs['database'] if 'database' in kwargs else Database(config, 'events')
 
-        self.id = self.__create_id()
+        self.id = ''
         self.title = ''
         self.description = ''
         self.channel = ''
@@ -21,8 +21,13 @@ class Event(object):
         self.type = ''
         self.time_zone = ''
 
+        if event_id:
+            self.id = event_id
+        else:
+            self.id = self.__create_id()
+
         if payload:
-            self.__read_payload(payload)
+            self.__populate_properties(payload)
 
     @staticmethod
     def __create_id() -> str:
