@@ -59,6 +59,14 @@ class Event(object):
     def create_payload(self):
         return {
             'id': self.id,
+            'attendees': [],
+            'channel': self.channel,
+            'date': self.date,
+            'description': self.description,
+            'end_time': self.end_time,
+            'presenter_id': self.presenter_id,
+            'start_time': self.start_time,
+            'time_zone': self.time_zone,
             'title': self.title,
             'type': self.type
         }
