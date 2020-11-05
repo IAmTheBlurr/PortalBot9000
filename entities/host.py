@@ -1,7 +1,7 @@
-""" ./entities/presenter.py """
+""" ./entities/host.py """
 
 
-class Presenter(object):
+class Host(object):
     def __init__(self):
         self.events = []
         self.discord_id = ''
