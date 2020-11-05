@@ -1,9 +1,9 @@
 """ ./entities/calendartron5000.py """
 from discord import Client as DiscordClient
-from discord import Message
+from discord import Message, User
 
 from connectors import Configuration, Database
-from entities import Event
+from entities import Attendee, Event
 
 
 class CalendarTron5000(DiscordClient):
@@ -11,6 +11,8 @@ class CalendarTron5000(DiscordClient):
         super().__init__()
         self.__config = config
         self.events = Database(self.__config, 'events')
+        self.attendees = Database(self.__config, 'attendees')
+        self.hosts = Database(self.__config, 'hosts')
 
     @property
     def __available_commands(self) -> dict:
@@ -19,25 +21,40 @@ class CalendarTron5000(DiscordClient):
             f'{prefix}attend-event': self.__attend_event,
             f'{prefix}cancel-event': self.__cancel_event,
             f'{prefix}create-event': self.__create_event,
-            f'{prefix}my-events': self.__my_events,
+            f'{prefix}events-attending': self.__events_attending,
+            f'{prefix}events-hosting': self.__events_hosting,
             f'{prefix}show-event': self.__show_event,
             f'{prefix}show-events': self.__show_events,
             f'{prefix}update-event': self.__update_event,
             f'{prefix}unattend-event': self.__unattend_event,
         }
 
-    async def __attend_event(self, message: Message, *args):
-        return
+    async def __attend_event(self, message: Message, args):
+        attendee = Attendee(str(message.author), self.__config, user=message.author)
+        await attendee.attend(args[0])
 
-    async def __create_event(self, message: Message, *args):
-        new_event = Event(self.__config, *args)
+    async def __create_event(self, message: Message, args):
+        payload = {
+            'title': args[0],
+            'type': args[1],
+        }
+        new_event = Event(self.__config, payload=payload)
         await new_event.create()
         await message.channel.send(f'Created event: {new_event.title}')
 
-    async def __cancel_event(self, message: Message, *args):
-        return
+    async def __cancel_event(self, _, args):
+        event = Event(self.__config, args[0], database=self.events)
 
-    async def __my_events(self, message: Message, *args):
+        for attendee_name in event.attendees:
+            await Attendee(attendee_name, self.__config).notify_of_cancellation(event.title)
+
+        await event.cancel()
+
+    async def __events_attending(self, message: Message, _):
+        attendee = Attendee(str(message.author), config=self.__config, user=message.author)
+        await attendee.show_attending()
+
+    async def __events_hosting(self, message: Message, args):
         return
 
     async def __show_event(self, message: Message, args):
@@ -64,8 +81,9 @@ class CalendarTron5000(DiscordClient):
             await message.author.create_dm()
             await message.author.dm_channel.send(events_message)
 
-    async def __unattend_event(self, message: Message, *args):
-        return
+    async def __unattend_event(self, message: Message, args):
+        attendee = Attendee(str(message.author), self.__config, user=message.author)
+        await attendee.unattend(args[0])
 
     async def __update_event(self, message: Message, *args):
         return
