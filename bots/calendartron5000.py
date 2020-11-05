@@ -1,4 +1,4 @@
-""" ./entities/calendartron.py """
+""" ./entities/calendartron5000.py """
 from discord import Client as DiscordClient
 from discord import Message
 
@@ -6,7 +6,7 @@ from connectors import Configuration, Database
 from entities import Event
 
 
-class CalendarTron(DiscordClient):
+class CalendarTron5000(DiscordClient):
     def __init__(self, config: Configuration):
         super().__init__()
         self.__config = config
