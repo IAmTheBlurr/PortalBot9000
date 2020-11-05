@@ -76,7 +76,11 @@ class Event(object):
         return
 
     async def cancel(self):
-        return
+        if not self.__database:
+            raise IOError('Database connection not constructed for this object')
+
+        async with self.__database:
+            await self.__database.delete({'id': self.id})
 
     async def create(self):
         async with self.__database:
