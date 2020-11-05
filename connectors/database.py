@@ -9,12 +9,12 @@ class Database(MongoClient):
     def __init__(self, config: Configuration, collection: str):
         super().__init__(config.database_url, config.database_port, connect=False)
         self.__database = None
-        self.__desired_collection = collection
+        self.collection_name = collection
         self.__collection = None
 
     async def __aenter__(self):
         self.__database = self.portal_events
-        self.__collection = self.__database[self.__desired_collection]
+        self.__collection = self.__database[self.collection_name]
 
     async def __aexit__(self, exc_type, exc_val, exc_tb_):
         self.close()
